@@ -1,15 +1,29 @@
 // ================= NAVIGATION =================
+/**
+ * Shows a specific section and hides all others.
+ *
+ * @param {string} section - The id of the section to display.
+ */
 window.showSection = function(section) {
   document.querySelectorAll('section').forEach(s => s.style.display = 'none')
   document.getElementById(section).style.display = 'block'
-};
+}
 
-// visa home direkt
+/**
+ * Initializes the page by showing the home section when DOM is loaded.
+ */
 document.addEventListener('DOMContentLoaded', () => {
   window.showSection('home')
 })
 
 // ================= BOOKING =================
+/**
+ * Sends a booking request to the backend API.
+ * Validates required fields before sending.
+ *
+ * @async
+ * @returns {Promise<void>}
+ */
 window.book = async function() {
   const name = document.querySelector('#name').value
   const email = document.querySelector('#email').value
@@ -18,7 +32,7 @@ window.book = async function() {
 
   if (!name || !email || !date) {
     document.querySelector('#status').textContent = 'Fill all fields'
-    return;
+    return
   }
 
   try {
@@ -35,8 +49,18 @@ window.book = async function() {
 }
 
 // ================= CHAT =================
+
+/**
+ * WebSocket connection used for real-time chat.
+ * @type {WebSocket}
+ */
 const socket = new WebSocket('wss://courselab.lnu.se/message-app/socket?apiKey=eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd')
 
+
+/**
+ * Sends a message through the WebSocket.
+ * Ignores empty input.
+ */
 window.sendMessage = function() {
   const input = document.querySelector('#chatInput')
 
@@ -49,8 +73,13 @@ window.sendMessage = function() {
   }))
 
   input.value = ''
-};
+}
 
+/**
+ * Handles incoming WebSocket messages and updates the UI.
+ *
+ * @param {MessageEvent} event - The incoming message event.
+ */
 socket.addEventListener('message', (event) => {
   const msg = JSON.parse(event.data)
   if (msg.type === 'heartbeat') return
@@ -60,6 +89,14 @@ socket.addEventListener('message', (event) => {
 
   document.querySelector('#messages').appendChild(div)
 })
+// ================= MATCHING =================
+
+/**
+ * Matches user input to the most relevant project based on keywords.
+ *
+ * @param {string} input - The user input describing a project idea.
+ * @returns {{name: string} | null} The best matching project or null if no match is found.
+ */
 function matchProject(input) {
   const keywords = input.toLowerCase()
 
@@ -88,6 +125,9 @@ function matchProject(input) {
   return bestMatch
 }
 
+/**
+ * Analyzes the user's input and displays the best matching project.
+ */
 window.analyze = function() {
   const input = document.querySelector('#message').value
   const result = matchProject(input)
@@ -96,6 +136,13 @@ window.analyze = function() {
     result ? 'You might need: ' + result.name : 'No match found'
 }
 
+// ================= DEVELOPERS =================
+
+/**
+ * Developer data used to display profiles.
+ *
+ * @type {Object<string, {name: string, role: string, desc: string}>}
+ */
 const developers = {
   sofie: {
     name: 'Sofie Söderberg',
@@ -113,7 +160,11 @@ const developers = {
     desc: 'Node.js specialist'
   }
 }
-
+/**
+ * Opens a developer profile and updates the UI.
+ *
+ * @param {string} id - The developer id.
+ */
 window.openProfile = function(id) {
   const dev = developers[id]
 
