@@ -9,14 +9,14 @@ nav {
   justify-content: space-between;
   padding: 20px;
   linear-gradient(135deg, #d1d3f3, #eef2ff);
-  color: rgb(0, 0, 0); 
+  color: rgb(0, 0, 0);
 }
 
 section {
   padding: 10px 10px;
   max-width: 900px;
   margin-left: 0px;
-  min-height: 70vh
+  min-height: 70vh;
 }
 
 input, textarea {
