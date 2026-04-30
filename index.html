@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sv">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,187 +12,207 @@
 
 <body>
 
-<!-- NAVBAR -->
-<nav>
-  <h2 class="logo">CodeHive</h2>
-  <div>
-    <button onclick="showSection('home')">Home</button>
-    <button onclick="showSection('developers')">Developers</button>
-    <button onclick="showSection('portfolio')">Portfolio</button>
-    <button onclick="showSection('booking')">Book</button>
-    <button onclick="showSection('chat')">Chat</button>
-    <button onclick="login()">Admin</button>
-  </div>
-</nav>
+  <!-- NAVBAR -->
+  <header>
+    <h1 class="logo" onclick="showSection('home')">CodeHive</h1>
 
-<!-- HOME -->
-<section id="home">
-  <div style="display:flex; gap:60px; align-items:center; max-width:1100px; margin:40px auto;">
+    <nav>
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
 
-    <div style="width:500px;">
-      <h1 class="hero-title" style="font-size:48px;">Build Modern Websites.</h1>
+      <div class="nav-links" id="navLinks">
+        <button class="blue-btn" onclick="showSection('home')">Home</button>
+        <button class="blue-btn" onclick="showSection('developers')">Developers</button>
+        <button class="blue-btn" onclick="showSection('portfolio')">Portfolio</button>
+        <button class="blue-btn" onclick="showSection('booking')">Book</button>
+        <button class="blue-btn" onclick="showSection('chat')">Chat</button>
+        <button class="blue-btn" onclick="login()">Admin</button>
+      </div>
+    </nav>
+  </header>
 
-      <p style="color:#6b7280;">
-        I create clean, user-friendly web applications.
-        Let’s build something amazing together.
-      </p>
+  <!-- HOME -->
+  <section id="home">
+    <div class="hero">
 
-      <button onclick="showSection('booking')"
-        style="margin-top:20px; padding:12px 24px; border:none; border-radius:30px; background:linear-gradient(135deg,#ff4ecd,#7c3aed); color:white;">
-        Book me
-      </button>
+      <div class="hero-left">
+        <h2 class="hero-title">Build Modern Websites.</h2>
+
+        <p class="hero-text">
+          I create clean, user-friendly web applications.
+          Let’s build something amazing together.
+        </p>
+
+        <button class="cta-btn" onclick="showSection('booking')">
+          Book me
+        </button>
+      </div>
+
+      <div class="hero-right">
+        <img src="/src/assets/sofie.png" class="hero-image">
+      </div>
+
     </div>
+  </section>
 
-    <div>
-      <img src="/src/assets/Sofie.jpg"
-        style="width:420px; border-radius:20px;">
-    </div>
+  <!-- DEVELOPERS LIST -->
+  <section id="developers" style="display:none">
+    <button class="back" onclick="goBack()">← Back</button>
 
-  </div>
-</section>
+    <div class="container developers">
+      <h2>Developers</h2>
+      <div class="dev-card" onclick="openProfile('sofie')">
+        <div class="dev-header">
+          <img src="/src/assets/sofie.png" class="avatar">
+          <div class="intro">
+            <h3>Sofie Söderberg</h3>
+            <p class="text-muted">Fullstack Developer</p>
+          </div>
+        </div>
 
-<!-- DEVELOPERS LIST -->
-<section id="developers" style="display:none">
+        <div class="skills">
+          <span>React</span>
+          <span>Node</span>
+          <span>MongoDB</span>
+        </div>
 
-  <div style="max-width:800px; margin:40px auto;">
-    <h2>Developers</h2>
-    <div class="dev-card" onclick="openProfile('sofie')">
-  <div class="dev-header">
-    <img src="/src/assets/Sofie.jpg" class="avatar">
-    <div>
-      <h3>Sofie Söderberg</h3>
-      <p class="role">Fullstack Developer</p>
-    </div>
-  </div>
-
-  <div class="skills">
-    <span>React</span>
-    <span>Node</span>
-    <span>MongoDB</span>
-  </div>
-
-  <div class="rating">⭐⭐⭐⭐⭐</div>
-</div>
+        <div class="rating">⭐⭐⭐⭐⭐</div>
+      </div>
 
 
-    <div class="dev-card" onclick="openProfile('emma')">
-  <div class="dev-header">
-    <img src="/src/assets/emma.png" class="avatar">
-    <div>
-      <h3>Emma Andersson</h3>
-      <p class="role">Frontend Developer</p>
-    </div>
-  </div>
+      <div class="dev-card" onclick="openProfile('emma')">
+        <div class="dev-header">
+          <img src="/src/assets/emma.png" class="avatar">
+          <div class="intro">
+            <h3>Emma Andersson</h3>
+            <p class="text-muted">Frontend Developer</p>
+          </div>
+        </div>
 
-  <div class="skills">
-    <span>React</span>
-    <span>Node</span>
-    <span>Build modern web apps</span>
-  </div>
+        <div class="skills">
+          <span>React</span>
+          <span>Node</span>
+          <span>Build modern web apps</span>
+        </div>
 
-  <div class="rating">⭐⭐⭐⭐☆</div>
-</div>
-<div class="dev-card" onclick="openProfile('jonas')">
-  <div class="dev-header">
-    <img src="/src/assets/jonas.png" class="avatar">
-    <div>
-      <h3>Jonas Eriksson</h3>
-      <p class="role">Backend Developer</p>
-    </div>
-  </div>
+        <div class="rating">⭐⭐⭐⭐☆</div>
+      </div>
+      <div class="dev-card" onclick="openProfile('jonas')">
+        <div class="dev-header">
+          <img src="/src/assets/jonas.png" class="avatar">
+          <div class="intro">
+            <h3>Jonas Eriksson</h3>
+            <p class="text-muted">Backend Developer</p>
+          </div>
+        </div>
 
-  <div class="skills">
-    <span>React</span>
-    <span>Node</span>
-    <span>Node.js specialist</span>
-  </div>
+        <div class="skills">
+          <span>React</span>
+          <span>Node</span>
+          <span>Node.js specialist</span>
+        </div>
 
-  <div class="rating">⭐⭐⭐⭐☆</div>
-</div>
+        <div class="rating">⭐⭐⭐⭐☆</div>
+      </div>
 
-</section>
+  </section>
 
-<!-- PROFILE -->
-<section id="profile" style="display:none">
+  <!-- PROFILE -->
+  <section id="profile" style="display:none">
+    <button class="back" onclick="goBack()">← Back</button>
+    
+    <div class="container profile">
 
-  <div style="max-width:800px; margin:40px auto;">
+      <img id="profileImg">
 
-    <button onclick="showSection('developers')">← Back</button>
+      <h2 id="profileName"></h2>
+      <p id="profileRole"></p>
 
-    <h2 id="profileName"></h2>
-    <p id="profileRole"></p>
+      <p id="profileDesc"></p>
 
-    <p id="profileDesc" style="margin-top:20px;"></p>
-
-    <button onclick="showSection('booking')">Contact</button>
-    <button onclick="showSection('chat')">Chat</button>
-
-  </div>
-
-</section>
-
-<!-- PORTFOLIO -->
-<section id="portfolio" style="display:none">
-
-  <div style="display:flex; gap:60px; max-width:1100px; margin:40px auto;">
-
-    <div style="background:#ffffff; padding:20px; border-radius:15px; width:500%;">
-      <p>
-        My name is Sofie Söderberg and I am a Computer Science student at Linnaeus University.
-      </p>
-
-      <p>
-        I build modern web applications and enjoy clean design.
-        Feel free to explore my projects.
-      </p>
-    </div>
-
-    <div style="width:500%">
-      <h2>My Projects</h2>
-
-      <div class="card">Personal Web Desktop</div>
-      <div class="card">The quiz app</div>
-      <div class="card">Realtime web application</div>
-      <div class="card">Auth and resource service</div>
-      <div class="card">CRUD snippets</div>
+      <button class="blue-btn" onclick="showSection('booking')">Contact</button>
+      <button class="blue-btn" onclick="showSection('chat')">Chat</button>
 
     </div>
 
-  </div>
+  </section>
 
-</section>
+  <!-- PORTFOLIO -->
+  <section id="portfolio" style="display:none">
+    <button class="back" onclick="goBack()">← Back</button>
 
-<!-- BOOKING -->
-<section id="booking" style="display:none">
-  <h2>Book a meeting</h2>
+    <div class="container portfolio">
 
-  <input id="name" placeholder="Your name">
-  <input id="email" placeholder="Your email">
-  <input type="datetime-local" id="date">
-  <textarea id="message" placeholder="Tell me about your project"></textarea>
+      <div class="portfolio-left">
+        <h3>About me</h3>
+        <p>
+          My name is Sofie Söderberg and I am a Computer Science student at Linnaeus University.
+        </p>
 
-  <button onclick="book()">Send booking</button>
+        <p>
+          I build modern web applications and enjoy clean design.
+          Feel free to explore my projects.
+        </p>
+      </div>
 
-  <button onclick="analyze()">Analyze idea</button>
-  <p id="result"></p>
+      <div class="portfolio-right">
+        <h3>My Projects</h3>
 
-  <p id="status"></p>
-</section>
+        <div class="card">Personal Web Desktop</div>
+        <div class="card">The quiz app</div>
+        <div class="card">Realtime web application</div>
+        <div class="card">Auth and resource service</div>
+        <div class="card">CRUD snippets</div>
 
-<section id="admin" style="display:none">
-  <h2>Bookings</h2>
-  <div id="bookingList"></div>
-</section>
+      </div>
 
-<!-- CHAT -->
-<section id="chat" style="display:none">
-  <h2>Live Chat</h2>
+    </div>
 
-  <div id="messages"></div>
+  </section>
 
-  <input id="chatInput" placeholder="Write message">
-  <button onclick="sendMessage()">Send</button>
-</section>
+  <!-- BOOKING -->
+  <section id="booking" style="display:none">
+    <button class="back" onclick="goBack()">← Back</button>
+
+    <div class="container booking">
+    <h2>Book a meeting</h2>
+
+    <input id="name" placeholder="Your name">
+    <input id="email" placeholder="Your email">
+    <input type="datetime-local" id="date">
+    <textarea id="message" placeholder="Tell me about your project"></textarea>
+
+    <button class="blue-btn" onclick="book()">Send booking</button>
+
+    <button class="blue-btn" onclick="analyze()">Analyze idea</button>
+    <p id="result"></p>
+
+    <p id="status"></p>
+    </div>
+  </section>
+  
+  <!-- CHAT -->
+  <section id="chat" style="display:none">
+    <button class="back" onclick="goBack()">← Back</button>
+
+    <div class="container chat">
+    <h2>Live Chat</h2>
+    
+    <div id="messages"></div>
+    
+    <input id="chatInput" placeholder="Write message">
+    <button class="blue-btn" onclick="sendMessage()">Send</button>
+    </div>
+  </section>
+  
+    <!-- ADMIN BOOKINGS -->
+    <section id="admin" style="display:none">
+      <button class="back" onclick="goBack()">← Back</button>
+      <div class="container admin">
+      <h2>Bookings</h2>
+      <div id="bookingList"></div>
+      </div>
+    </section>
 
 </body>
+
 </html>

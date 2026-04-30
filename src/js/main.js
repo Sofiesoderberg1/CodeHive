@@ -1,20 +1,73 @@
 // ================= NAVIGATION =================
 
+const historyStack = []
+let currentSection = 'home'
+
 /**
  * Shows a specific section and hides all others.
  *
  * @param {string} section - The id of the section to display.
  */
 window.showSection = function (section) {
-  document.querySelectorAll('section').forEach(s => s.style.display = 'none')
-  document.getElementById(section).style.display = 'block'
+  if (section !== currentSection) {
+    historyStack.push(currentSection)
+    currentSection = section
+  }
+
+  document
+    .querySelectorAll('section')
+    .forEach((s) => (s.style.display = 'none'))
+
+  const next = document.getElementById(section)
+  if (next) next.style.display = 'block'
+
+  closeMenu()
 }
 
 /**
- * Initializes the page by showing the home section when DOM is loaded.
+ * Global variable to keep track of the previously displayed section.
+ *
+ * @type {string} - The id of the previous section.
  */
-document.addEventListener('DOMContentLoaded', () => {
-  window.showSection('home')
+window.goBack = function () {
+  const prev = historyStack.pop()
+
+  if (!prev) return
+
+  currentSection = prev
+
+  document
+    .querySelectorAll('section')
+    .forEach((s) => (s.style.display = 'none'))
+
+  const next = document.getElementById(prev)
+  if (next) next.style.display = 'block'
+}
+
+/**
+ * Toggles the navigation menu by adding/removing the 'active' class.
+ */
+document.querySelector('.menu-toggle').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('active')
+})
+
+/**
+ * Closes the navigation menu by removing the 'active' class.
+ */
+function closeMenu () {
+  const nav = document.getElementById('navLinks')
+  if (nav) nav.classList.remove('active')
+}
+
+document.addEventListener('click', (e) => {
+  const nav = document.getElementById('navLinks')
+  const toggle = document.querySelector('.menu-toggle')
+
+  if (!nav || !toggle) return
+
+  if (!nav.contains(e.target) && e.target !== toggle) {
+    nav.classList.remove('active')
+  }
 })
 
 // ================= BOOKING =================
@@ -142,20 +195,23 @@ window.analyze = function () {
 /**
  * Developer data used to display profiles.
  *
- * @type {Object<string, {name: string, role: string, desc: string}>}
+ * @type {{ [key: string]: {name: string, role: string, desc: string} }}
  */
 const developers = {
   sofie: {
+    id: 'sofie',
     name: 'Sofie Söderberg',
     role: 'Fullstack Developer',
     desc: 'React, Node, MongoDB'
   },
   emma: {
+    id: 'emma',
     name: 'Emma Andersson',
     role: 'Frontend Developer',
     desc: 'I build modern websites'
   },
   jonas: {
+    id: 'jonas',
     name: 'Jonas Eriksson',
     role: 'Backend Developer',
     desc: 'Node.js specialist'
@@ -171,9 +227,17 @@ window.openProfile = function (id) {
 
   document.querySelector('#profileName').textContent = dev.name
   document.querySelector('#profileRole').textContent = dev.role
-  document.querySelector('#profileDesc').textContent = dev.desc
+  const container = document.querySelector('#profileDesc')
+  container.innerHTML = ''
 
-  showSection('profile')
+  dev.desc.split(',').forEach((skill) => {
+    const span = document.createElement('span')
+    span.textContent = skill.trim()
+    container.appendChild(span)
+  })
+  document.querySelector('#profileImg').src = `./src/assets/${id}.png`
+
+  window.showSection('profile')
 }
 
 /**
@@ -194,7 +258,7 @@ window.loadBookings = async function () {
 
   const res = await fetch('http://localhost:5000/bookings', {
     headers: {
-      'authorization': token
+      authorization: token
     }
   })
 
@@ -237,8 +301,8 @@ window.login = async function () {
 
   if (data.token) {
     localStorage.setItem('token', data.token)
-    showSection('admin')
-    loadBookings()
+    window.showSection('admin')
+    window.loadBookings()
   } else {
     alert('Wrong password')
   }
