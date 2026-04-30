@@ -1,10 +1,11 @@
 // ================= NAVIGATION =================
+
 /**
  * Shows a specific section and hides all others.
  *
  * @param {string} section - The id of the section to display.
  */
-window.showSection = function(section) {
+window.showSection = function (section) {
   document.querySelectorAll('section').forEach(s => s.style.display = 'none')
   document.getElementById(section).style.display = 'block'
 }
@@ -24,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * @async
  * @returns {Promise<void>}
  */
-window.book = async function() {
+window.book = async function () {
   const name = document.querySelector('#name').value
   const email = document.querySelector('#email').value
   const date = document.querySelector('#date').value
@@ -52,16 +53,16 @@ window.book = async function() {
 
 /**
  * WebSocket connection used for real-time chat.
+ *
  * @type {WebSocket}
  */
 const socket = new WebSocket('wss://courselab.lnu.se/message-app/socket?apiKey=eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd')
-
 
 /**
  * Sends a message through the WebSocket.
  * Ignores empty input.
  */
-window.sendMessage = function() {
+window.sendMessage = function () {
   const input = document.querySelector('#chatInput')
 
   if (!input.value) return
@@ -97,7 +98,7 @@ socket.addEventListener('message', (event) => {
  * @param {string} input - The user input describing a project idea.
  * @returns {{name: string} | null} The best matching project or null if no match is found.
  */
-function matchProject(input) {
+function matchProject (input) {
   const keywords = input.toLowerCase()
 
   const projects = [
@@ -128,7 +129,7 @@ function matchProject(input) {
 /**
  * Analyzes the user's input and displays the best matching project.
  */
-window.analyze = function() {
+window.analyze = function () {
   const input = document.querySelector('#message').value
   const result = matchProject(input)
 
@@ -165,7 +166,7 @@ const developers = {
  *
  * @param {string} id - The developer id.
  */
-window.openProfile = function(id) {
+window.openProfile = function (id) {
   const dev = developers[id]
 
   document.querySelector('#profileName').textContent = dev.name
@@ -173,4 +174,72 @@ window.openProfile = function(id) {
   document.querySelector('#profileDesc').textContent = dev.desc
 
   showSection('profile')
+}
+
+/**
+ * Fetches all bookings from the backend and displays them in the admin view.
+ * Requires a valid JWT token stored in localStorage.
+ *
+ * @async
+ * @function loadBookings
+ * @returns {Promise<void>}
+ */
+window.loadBookings = async function () {
+  const token = localStorage.getItem('token')
+
+  if (!token) {
+    alert('Not authorized')
+    return
+  }
+
+  const res = await fetch('http://localhost:5000/bookings', {
+    headers: {
+      'authorization': token
+    }
+  })
+
+  const data = await res.json()
+
+  const container = document.querySelector('#bookingList')
+  container.innerHTML = ''
+
+  data.forEach(b => {
+    const div = document.createElement('div')
+    div.className = 'card'
+    div.innerHTML = `
+      <strong>${b.name}</strong><br>
+      ${b.email}<br>
+      ${b.date}<br>
+      ${b.message}
+    `
+    container.appendChild(div)
+  })
+}
+
+/**
+ * Prompts the user for an admin password and attempts to log in.
+ * If successful, stores JWT token in localStorage and loads admin bookings.
+ *
+ * @async
+ * @function login
+ * @returns {Promise<void>}
+ */
+window.login = async function () {
+  const password = prompt('Enter admin password')
+
+  const res = await fetch('http://localhost:5000/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password })
+  })
+
+  const data = await res.json()
+
+  if (data.token) {
+    localStorage.setItem('token', data.token)
+    showSection('admin')
+    loadBookings()
+  } else {
+    alert('Wrong password')
+  }
 }
