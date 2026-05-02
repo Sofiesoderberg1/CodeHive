@@ -194,6 +194,8 @@
     "shebang-command": "^2.0.0",
     "shebang-regex": "^3.0.0",
     "side-channel": "^1.0.4",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3",
     "source-map-js": "^1.0.2",
     "spdx-exceptions": "^2.3.0",
     "spdx-expression-parse": "^3.0.1",

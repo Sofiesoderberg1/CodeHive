@@ -1,3 +1,6 @@
+import { io } from 'socket.io-client'
+
+const socket = io ('http://localhost:5000')
 // ================= NAVIGATION =================
 
 const historyStack = []
@@ -102,32 +105,48 @@ window.book = async function () {
   }
 }
 
+/**
+ * Currently selected developer for chat.
+ *
+ * @type {string|null}
+ */
+let currentChatUser = null
+
 // ================= CHAT =================
 
 /**
- * WebSocket connection used for real-time chat.
- *
- * @type {WebSocket}
- */
-const socket = new WebSocket('wss://courselab.lnu.se/message-app/socket?apiKey=eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd')
-
-/**
- * Sends a message through the WebSocket.
+ * Sends a message through Socket.io.
  * Ignores empty input.
  */
 window.sendMessage = function () {
   const input = document.querySelector('#chatInput')
 
-  if (!input.value) return
+  if (!input.value || !currentChatUser) return
 
-  socket.send(JSON.stringify({
-    type: 'message',
-    data: input.value,
-    username: 'Sofie'
-  }))
+  socket.emit('sendMessage', {
+    from: 'user',
+    to: currentChatUser,
+    message: input.value
+  })
 
   input.value = ''
 }
+
+/**
+ * Handles incoming Socket.io messages and updates the UI.
+ */
+socket.on('receiveMessage', (msg) => {
+  // visa bara rätt chat
+  if (
+    msg.to !== currentChatUser &&
+    msg.from !== currentChatUser
+  ) return
+
+  const div = document.createElement('div')
+  div.textContent = msg.from + ': ' + msg.message
+
+  document.querySelector('#messages').appendChild(div)
+})
 
 /**
  * Handles incoming WebSocket messages and updates the UI.
@@ -225,8 +244,13 @@ const developers = {
 window.openProfile = function (id) {
   const dev = developers[id]
 
+  currentChatUser = dev.id // ✅ NY
+
+  document.querySelector('#messages').innerHTML = '' // ✅ NY
+
   document.querySelector('#profileName').textContent = dev.name
   document.querySelector('#profileRole').textContent = dev.role
+
   const container = document.querySelector('#profileDesc')
   container.innerHTML = ''
 

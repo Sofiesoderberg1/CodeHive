@@ -2,15 +2,21 @@ import express from 'express'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import jwt from 'jsonwebtoken'
+import http from 'http'
+import { Server } from 'socket.io'
 
 const app = express()
 
 app.use(cors())
 app.use(express.json())
 
+// ================= DB =================
+
 mongoose.connect('mongodb://127.0.0.1:27017/codehive')
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log(err))
+
+// ================= MODELS =================
 
 const bookingSchema = new mongoose.Schema({
   name: String,
@@ -20,43 +26,43 @@ const bookingSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 })
 
-const Booking = mongoose.model('Booking', bookingSchema)
+const chatSchema = new mongoose.Schema({
+  from: String,
+  to: String,
+  message: String,
+  createdAt: { type: Date, default: Date.now }
+})
 
-// TEST ROUTE
+const Booking = mongoose.model('Booking', bookingSchema)
+const Chat = mongoose.model('Chat', chatSchema)
+
+// ================= ROUTES =================
+
 app.get('/', (req, res) => {
   res.send('Server is running')
 })
 
-app.get('/bookings',verifyToken, async (req, res) => {
+app.get('/bookings', verifyToken, async (req, res) => {
   const bookings = await Booking.find()
   res.json(bookings)
 })
 
-// BOOKING ROUTE
 app.post('/booking', async (req, res) => {
   try {
-    const { name, email, date, message } = req.body
-
-    const booking = new Booking({ name, email, date, message })
+    const booking = new Booking(req.body)
     await booking.save()
-
-    console.log('Saved to DB:', booking)
-
     res.json({ message: 'Booking saved' })
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Failed to save booking' })
   }
 })
 
 app.post('/login', (req, res) => {
-  const { password } = req.body
-
-  if (password !== '1234') {
+  if (req.body.password !== '1234') {
     return res.status(401).json({ error: 'Wrong password' })
   }
 
   const token = jwt.sign({ role: 'admin' }, 'secretkey')
-
   res.json({ token })
 })
 
@@ -72,6 +78,31 @@ function verifyToken (req, res, next) {
   }
 }
 
-app.listen(5000, () => {
+// ================= SOCKET =================
+
+const server = http.createServer(app)
+
+const io = new Server(server, {
+  cors: { origin: '*' }
+})
+
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id)
+
+  socket.on('sendMessage', async (data) => {
+    const chat = new Chat(data)
+    await chat.save()
+
+    io.emit('receiveMessage', chat)
+  })
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected')
+  })
+})
+
+// ================= START =================
+
+server.listen(5000, () => {
   console.log('Server running on http://localhost:5000')
 })
