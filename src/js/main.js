@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client'
 
-const socket = io ('http://localhost:5000')
+const socket = io('http://localhost:5000')
 // ================= NAVIGATION =================
 
 const historyStack = []
@@ -86,6 +86,7 @@ window.book = async function () {
   const email = document.querySelector('#email').value
   const date = document.querySelector('#date').value
   const message = document.querySelector('#message').value
+  const developer = document.querySelector('#developer').value
 
   if (!name || !email || !date) {
     document.querySelector('#status').textContent = 'Fill all fields'
@@ -96,7 +97,7 @@ window.book = async function () {
     await fetch('http://localhost:5000/booking', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, date, message })
+      body: JSON.stringify({ name, email, date, message, developer })
     })
 
     document.querySelector('#status').textContent = 'Booking sent!'

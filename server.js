@@ -23,10 +23,12 @@ const bookingSchema = new mongoose.Schema({
   email: String,
   date: String,
   message: String,
+  developer: String,
   createdAt: { type: Date, default: Date.now }
 })
 
 const chatSchema = new mongoose.Schema({
+  bookingId: String,
   from: String,
   to: String,
   message: String,
