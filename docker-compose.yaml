@@ -1,0 +1,20 @@
+services:
+  app:
+    container_name: codehive-app
+
+    build:
+      context: .
+
+    ports:
+      - "3000:3000"
+
+    environment:
+      - SESSION_SECRET=${SESSION_SECRET}
+      - MONGO_URI=mongodb://mongodb:27017/codehive
+
+    depends_on:
+      - mongodb
+
+  mongodb:
+    container_name: codehive-mongodb
+    image: mongo

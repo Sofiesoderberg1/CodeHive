@@ -4,15 +4,19 @@ import mongoose from 'mongoose'
 import jwt from 'jsonwebtoken'
 import http from 'http'
 import { Server } from 'socket.io'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
 const app = express()
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 app.use(cors())
 app.use(express.json())
 
 // ================= DB =================
 
-mongoose.connect('mongodb://127.0.0.1:27017/codehive')
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log(err))
 
@@ -39,10 +43,6 @@ const Booking = mongoose.model('Booking', bookingSchema)
 const Chat = mongoose.model('Chat', chatSchema)
 
 // ================= ROUTES =================
-
-app.get('/', (req, res) => {
-  res.send('Server is running')
-})
 
 app.get('/bookings', verifyToken, async (req, res) => {
   const bookings = await Booking.find()
@@ -80,6 +80,12 @@ function verifyToken (req, res, next) {
   }
 }
 
+app.use(express.static(path.join(__dirname, 'dist')))
+
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+})
+
 // ================= SOCKET =================
 
 const server = http.createServer(app)
@@ -105,6 +111,8 @@ io.on('connection', (socket) => {
 
 // ================= START =================
 
-server.listen(5000, () => {
-  console.log('Server running on http://localhost:5000')
+const PORT = process.env.PORT || 3000
+
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on http://localhost:${PORT}`)
 })
