@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client'
 
-const socket = io('http://localhost:5000')
+const socket = io(window.location.origin)
 // ================= NAVIGATION =================
 
 const historyStack = []
@@ -94,7 +94,7 @@ window.book = async function () {
   }
 
   try {
-    await fetch('http://localhost:5000/booking', {
+    await fetch('/booking', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, date, message, developer })
@@ -242,6 +242,7 @@ const developers = {
  *
  * @param {string} id - The developer id.
  */
+
 window.openProfile = function (id) {
   const dev = developers[id]
 
@@ -260,7 +261,7 @@ window.openProfile = function (id) {
     span.textContent = skill.trim()
     container.appendChild(span)
   })
-  document.querySelector('#profileImg').src = `./src/assets/${id}.png`
+  document.querySelector('#profileImg').src = `/images/${id}.png`
 
   window.showSection('profile')
 }
@@ -281,7 +282,7 @@ window.loadBookings = async function () {
     return
   }
 
-  const res = await fetch('http://localhost:5000/bookings', {
+  const res = await fetch('/bookings', {
     headers: {
       authorization: token
     }
@@ -316,7 +317,7 @@ window.loadBookings = async function () {
 window.login = async function () {
   const password = prompt('Enter admin password')
 
-  const res = await fetch('http://localhost:5000/login', {
+  const res = await fetch('/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ password })
