@@ -3,9 +3,11 @@ import { io } from 'socket.io-client'
 const socket = io(window.location.origin)
 const input = document.querySelector('#chatInput')
 
-input.addEventListener('input', () => {
-  socket.emit('typing', currentChatUser)
-})
+if (input) {
+  input.addEventListener('input', () => {
+    socket.emit('typing', currentChatUser)
+  })
+}
 // ================= NAVIGATION =================
 
 const historyStack = []
@@ -127,11 +129,11 @@ let currentChatUser = null
 window.sendMessage = function () {
   const input = document.querySelector('#chatInput')
 
-  if (!input.value || !currentChatUser) return
+  if (!input.value) return
 
   socket.emit('sendMessage', {
-    from: currentUser,
-    to: currentChatUser,
+    from: 'user',
+    to: currentChatUser || 'global',
     message: input.value
   })
 
@@ -144,6 +146,7 @@ window.sendMessage = function () {
 socket.on('receiveMessage', (msg) => {
   // visa bara rätt chat
   if (
+    msg.to !== 'global' &&
     msg.to !== currentChatUser &&
     msg.from !== currentChatUser
   ) return
@@ -165,11 +168,10 @@ socket.on('showTyping', (user) => {
   setTimeout(() => {
     typing.textContent = ''
   }, 1500)
-
-  socket.on('onlineUsers', (count) => {
-    document.querySelector('#onlineStatus').textContent = 
+})
+socket.on('onlineUsers', (count) => {
+  document.querySelector('#onlineStatus').textContent = 
     `${count} users online`
-  })
 })
 
 // ================= MATCHING =================
@@ -258,26 +260,26 @@ window.openProfile = function (id) {
   currentChatUser = dev.id // ✅ NY
 
   const container = document.querySelector('#messages')
-container.innerHTML = ''
+  container.innerHTML = ''
 
-fetch(`/messages/${dev.id}`)
-  .then(res => res.json())
-  .then(messages => {
-    messages.forEach(msg => {
-      const div = document.createElement('div')
+  fetch(`/messages/${dev.id}`)
+    .then(res => res.json())
+    .then(messages => {
+      socket.emit('joinRoom', id)
 
-      div.className =
+      messages.forEach(msg => {
+        const div = document.createElement('div')
+
+        div.className =
         msg.from === 'user'
           ? 'my-message'
           : 'their-message'
 
-      div.textContent = msg.message
+        div.textContent = msg.message
 
-      container.appendChild(div)
-
-      socket.emit('joinRoom', id)
+        container.appendChild(div)
+      })
     })
-  })
 
   document.querySelector('#profileName').textContent = dev.name
   document.querySelector('#profileRole').textContent = dev.role

@@ -112,23 +112,38 @@ let onlineUsers = 0
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id)
 
-  socket.on('sendMessage', async (data) => {
-    const chat = new Chat(data)
-    await chat.save()
+  onlineUsers++
+  io.emit('onlineUsers', onlineUsers)
 
-    io.to(data.to).emit('receiveMessage', chat)
+  // ================= JOIN ROOM =================
 
-    socket.on('typing', (user) => {
-      socket.broadcast.emit('showTyping', user)
-
-      onlineUsers++
-      io.emit('onlineUsers', onlineUsers)
-
-      socket.on('joinRoom', (room) => {
-        socket.join(room)
-      })
-    })
+  socket.on('joinRoom', (room) => {
+    socket.join(room)
   })
+
+  // ================= SEND MESSAGE =================
+
+  socket.on('sendMessage', async (data) => {
+    try {
+      const chat = new Chat(data)
+
+      await chat.save()
+
+      io.to(data.to).emit('receiveMessage', chat)
+    } catch (err) {
+      console.log(err)
+
+      io.to(data.to).emit('receiveMessage', data)
+    }
+  })
+
+  // ================= TYPING =================
+
+  socket.on('typing', (user) => {
+    socket.broadcast.emit('showTyping', user)
+  })
+
+  // ================= DISCONNECT =================
 
   socket.on('disconnect', () => {
     onlineUsers--
