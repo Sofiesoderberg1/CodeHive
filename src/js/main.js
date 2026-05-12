@@ -1,6 +1,11 @@
 import { io } from 'socket.io-client'
 
 const socket = io(window.location.origin)
+const input = document.querySelector('#chatInput')
+
+input.addEventListener('input', () => {
+  socket.emit('typing', currentChatUser)
+})
 // ================= NAVIGATION =================
 
 const historyStack = []
@@ -125,7 +130,7 @@ window.sendMessage = function () {
   if (!input.value || !currentChatUser) return
 
   socket.emit('sendMessage', {
-    from: 'user',
+    from: currentUser,
     to: currentChatUser,
     message: input.value
   })
@@ -147,22 +152,26 @@ socket.on('receiveMessage', (msg) => {
   div.textContent = msg.from + ': ' + msg.message
 
   document.querySelector('#messages').appendChild(div)
+
+  const messages = document.querySelector('#messages')
+  messages.scrollTop = messages.scrollHeight
 })
 
-/**
- * Handles incoming WebSocket messages and updates the UI.
- *
- * @param {MessageEvent} event - The incoming message event.
- */
-socket.addEventListener('message', (event) => {
-  const msg = JSON.parse(event.data)
-  if (msg.type === 'heartbeat') return
+socket.on('showTyping', (user) => {
+  const typing = document.querySelector('#typing')
+  
+  typing.textContent = `${user} is typing...`
 
-  const div = document.createElement('div')
-  div.textContent = msg.username + ': ' + msg.data
+  setTimeout(() => {
+    typing.textContent = ''
+  }, 1500)
 
-  document.querySelector('#messages').appendChild(div)
+  socket.on('onlineUsers', (count) => {
+    document.querySelector('#onlineStatus').textContent = 
+    `${count} users online`
+  })
 })
+
 // ================= MATCHING =================
 
 /**
@@ -248,7 +257,27 @@ window.openProfile = function (id) {
 
   currentChatUser = dev.id // ✅ NY
 
-  document.querySelector('#messages').innerHTML = '' // ✅ NY
+  const container = document.querySelector('#messages')
+container.innerHTML = ''
+
+fetch(`/messages/${dev.id}`)
+  .then(res => res.json())
+  .then(messages => {
+    messages.forEach(msg => {
+      const div = document.createElement('div')
+
+      div.className =
+        msg.from === 'user'
+          ? 'my-message'
+          : 'their-message'
+
+      div.textContent = msg.message
+
+      container.appendChild(div)
+
+      socket.emit('joinRoom', id)
+    })
+  })
 
   document.querySelector('#profileName').textContent = dev.name
   document.querySelector('#profileRole').textContent = dev.role

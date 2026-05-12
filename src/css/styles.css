@@ -288,12 +288,43 @@ button:hover {
 /* ===== UI ELEMENTS ===== */
 
 #messages {
-  height: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 300px;
   overflow-y: auto;
-  background: #ffffff;
-  padding: 10px;
+  padding: 20px;
+}
+
+.my-message {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #7c3aed, #ff4ecd);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 16px 16px 0 16px;
+  max-width: 70%;
+}
+
+.their-message {
+  align-self: flex-start;
+  background: white;
+  padding: 10px 14px;
+  border-radius: 16px 16px 16px 0;
+  max-width: 70%;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+#onlineStatus {
+  color: #10b981;
+  font-size: 14px;
   margin-bottom: 10px;
-  border-radius: 10px;
+}
+
+#typing {
+  color: #6b7280;
+  font-size: 13px;
+  font-style: italic;
+  height: 20px;
 }
 
 #result {

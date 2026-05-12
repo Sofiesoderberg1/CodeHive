@@ -89,6 +89,16 @@ app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'))
 })
 
+app.get('/messages/:user', async (req, res) => {
+  const messages = await Chat.find({
+    $or: [
+      { from: req.params.user },
+      { to: req.params.user }
+    ]
+  }).sort({ createdAt: 1 })
+
+  res.json(messages)
+})
 // ================= SOCKET =================
 
 const server = http.createServer(app)
@@ -97,6 +107,8 @@ const io = new Server(server, {
   cors: { origin: '*' }
 })
 
+let onlineUsers = 0
+
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id)
 
@@ -104,10 +116,25 @@ io.on('connection', (socket) => {
     const chat = new Chat(data)
     await chat.save()
 
-    io.emit('receiveMessage', chat)
+    io.to(data.to).emit('receiveMessage', chat)
+
+    socket.on('typing', (user) => {
+      socket.broadcast.emit('showTyping', user)
+
+      onlineUsers++
+      io.emit('onlineUsers', onlineUsers)
+
+      socket.on('joinRoom', (room) => {
+        socket.join(room)
+      })
+    })
   })
 
   socket.on('disconnect', () => {
+    onlineUsers--
+
+    io.emit('onlineUsers', onlineUsers)
+
     console.log('User disconnected')
   })
 })
