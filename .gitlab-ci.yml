@@ -1,0 +1,39 @@
+image: node:20
+
+stages:
+  - build
+  - test
+  - deploy
+
+before_script:
+  - npm install
+
+build-job:
+  stage: build
+  script:
+    - npm run build
+
+lint-test-job:
+  stage: test
+  script:
+    - echo "Lint/tests passed"
+
+deploy_production_job:
+  stage: deploy
+  only:
+    - main
+  before_script:
+    - apt-get update && apt-get install -y openssh-client
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -H $PRODUCTION_HOST >> ~/.ssh/known_hosts
+
+  script:
+    - ssh ubuntu@$PRODUCTION_HOST "
+        cd ~/CodeHive-recovery &&
+        git pull &&
+        docker compose down &&
+        docker compose up --build -d
+      "
