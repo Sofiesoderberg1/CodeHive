@@ -282,13 +282,13 @@ fetch(`/messages/${dev.id}`)
   document.querySelector('#profileName').textContent = dev.name
   document.querySelector('#profileRole').textContent = dev.role
 
-  const container = document.querySelector('#profileDesc')
-  container.innerHTML = ''
+  const profileContainer = document.querySelector('#profileDesc')
+  profileContainer.innerHTML = ''
 
   dev.desc.split(',').forEach((skill) => {
     const span = document.createElement('span')
     span.textContent = skill.trim()
-    container.appendChild(span)
+    profileContainer.appendChild(span)
   })
   document.querySelector('#profileImg').src = `/images/${id}.png`
 
