@@ -2,8 +2,6 @@ import express from 'express'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import jwt from 'jsonwebtoken'
-import http from 'http'
-import { Server } from 'socket.io'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import dotenv from 'dotenv'
@@ -134,55 +132,6 @@ app.post('/login', (req, res) => {
   res.json({ token })
 })
 
-// ---------- CHAT LOGIN ----------
-
-app.post('/chat-login', (req, res) => {
-  const token = jwt.sign(
-    {
-      id: 'user',
-      role: 'user'
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: '1d'
-    }
-  )
-
-  res.json({
-    token,
-    userId: 'user'
-  })
-})
-
-// ---------- LOAD MESSAGES ----------
-app.get('/messages/:user', verifyToken, async (req, res) => {
-  const requestedUser = req.params.user
-  const currentUser = req.user.id
-
-  // User can only access own chats
-  if (
-    currentUser !== requestedUser &&
-    req.user.role !== 'admin'
-  ) {
-    return res.sendStatus(403)
-  }
-
-  const messages = await Chat.find({
-    $or: [
-      {
-        from: currentUser,
-        to: requestedUser
-      },
-      {
-        from: requestedUser,
-        to: currentUser
-      }
-    ]
-  }).sort({ createdAt: 1 })
-
-  res.json(messages)
-})
-
 // ================= STATIC =================
 
 app.use(express.static(path.join(__dirname, 'dist')))
@@ -193,93 +142,11 @@ app.use((req, res) => {
   )
 })
 
-// ================= SOCKET =================
-
-const server = http.createServer(app)
-
-const io = new Server(server, {
-  cors: {
-    origin: '*'
-  }
-})
-
-// ---------- SOCKET AUTH ----------
-
-io.use((socket, next) => {
-  const token = socket.handshake.auth.token
-
-  if (!token) {
-    return next(
-      new Error('Authentication error')
-    )
-  }
-
-  try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET
-    )
-
-    socket.user = decoded
-
-    next()
-  } catch {
-    next(new Error('Invalid token'))
-  }
-})
-
-io.on('connection', (socket) => {
-  console.log('User connected:', socket.user.id)
-
-  // Join private room
-  socket.join(socket.user.id)
-
-  // ================= SEND MESSAGE =================
-
-  socket.on('sendMessage', async (data) => {
-    console.log('MESSAGE RECEIVED:', data)
-    console.log('FROM:', socket.user.id)
-    const chat = new Chat({
-      from: socket.user.id,
-      to: data.to,
-      message: data.message
-    })
-
-    await chat.save()
-
-    // Send only to private rooms
-    io.to(data.to).emit(
-      'receiveMessage',
-      chat
-    )
-
-    io.to(socket.user.id).emit(
-      'receiveMessage',
-      chat
-    )
-  })
-
-  // ================= TYPING =================
-
-  socket.on('typing', (user) => {
-    socket.broadcast.emit(
-      'showTyping',
-      user
-    )
-  })
-
-  // ================= DISCONNECT =================
-
-  socket.on('disconnect', () => {
-    console.log('User disconnected')
-  })
-})
-
 // ================= START =================
 
 const PORT = process.env.PORT || 3000
 
-server.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(
     `Server running on http://localhost:${PORT}`
   )

@@ -287,7 +287,7 @@ button:hover {
 
 /* ===== UI ELEMENTS ===== */
 
-.my-message {
+.message {
   align-self: flex-end;
   background: linear-gradient(135deg, #7c3aed, #ff4ecd);
   color: white;
@@ -420,6 +420,7 @@ button:hover {
 .logo {
   letter-spacing: -0.5px;
   background: linear-gradient(135deg, #7c3aed, #ff4ecd);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -552,6 +553,18 @@ button:hover {
 
 .footer-links p:hover {
   color: white;
+}
+
+.footer-links a {
+  display: block;
+  color: #ffffff;
+  text-decoration: none;
+  margin-top: 10px;
+  transition: 0.3s;
+}
+
+.footer-links a:hover {
+  color: #a855f7;
 }
 
 .footer-bottom {

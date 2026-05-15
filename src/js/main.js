@@ -1,130 +1,89 @@
-import { io } from 'socket.io-client'
+import { db } from './firebase.js'
 
-let socket
+import {
+  collection,
+  addDoc,
+  query,
+  orderBy,
+  onSnapshot,
+  serverTimestamp
+} from 'firebase/firestore'
 
-// ================= CHAT AUTH =================
+console.log('Firebase connected', db)
 
-/**
- * Authenticates a normal chat user and stores JWT token locally.
- *
- * @async
- * @returns {Promise<string>} JWT token
- */
-const chatAuth = async () => {
-  const existingToken = localStorage.getItem('chatToken')
+const currentUser =
+  localStorage.getItem('chatUser') ||
+  crypto.randomUUID()
 
-  if (existingToken) {
-    return existingToken
-  }
+localStorage.setItem(
+  'chatUser',
+  currentUser
+)
 
-  const res = await fetch('/chat-login', {
-    method: 'POST'
-  })
-
-  const data = await res.json()
-
-  localStorage.setItem('chatToken', data.token)
-  localStorage.setItem('userId', data.userId)
-
-  return data.token
-}
-
-// ================= START SOCKET =================
-
-chatAuth().then(token => {
-  socket = io(window.location.origin, {
-    auth: {
-      token
-    }
-  })
-
-  socket.on('connect', () => {
-    console.log('Socket connected')
-  })
-  setupSocket()
-})
-
-// ================= CHAT USER =================
-
-/**
- * Currently selected developer for chat.
- *
- * @type {string|null}
- */
 let currentChatUser = null
 
-// ================= SOCKET EVENTS =================
+/**
+ * Creates unique room id for two users.
+ *
+ * @param {string} user1 - user one.
+ * @param {string} user2 - user two.
+ * @returns {string} - string.
+ */
+function getRoomId (user1, user2) {
+  return [user1, user2]
+    .sort()
+    .join('_')
+}
+
+// ======================
+// MENU
+// ======================
+/**
+ * Toggles mobile navigation menu.
+ */
+window.toggleMenu = function () {
+  const nav = document.getElementById('navLinks')
+
+  if (nav) {
+    nav.classList.toggle('active')
+  }
+}
+
+// ======================
+// LIVE CHAT
+// ======================
 
 /**
- * Sets up all Socket.io event listeners.
- *
- * @returns {void}
+ * Sends private realtime message.
  */
-function setupSocket () {
-  const input = document.querySelector('#chatInput')
+window.sendMessage = async function () {
+  const input =
+    document.querySelector('#chatInput')
 
-  if (input) {
-    input.addEventListener('input', () => {
-      if (!currentChatUser) return
+  const text = input.value.trim()
 
-      socket.emit('typing', currentChatUser)
-    })
-  }
+  if (!text || !currentChatUser) return
 
-  /**
-   * Handles incoming chat messages.
-   */
-  socket.on('receiveMessage', (msg) => {
-    console.log('MESSAGE ARRIVED:', msg)
-    const div = document.createElement('div')
+  const roomId = getRoomId(
+    currentUser,
+    currentChatUser
+  )
 
-    div.className =
-      msg.from === localStorage.getItem('userId')
-        ? 'my-message'
-        : 'their-message'
+  const messagesRef = collection(
+    db,
+    'chats',
+    roomId,
+    'messages'
+  )
 
-    const time = new Date(msg.createdAt).toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-
-    div.innerHTML = `
-      <div>${msg.message}</div>
-      <small>${time}</small>
-    `
-
-    document.querySelector('#messages').appendChild(div)
-
-    const messages = document.querySelector('#messages')
-
-    messages.scrollTop = messages.scrollHeight
+  await addDoc(messagesRef, {
+    text,
+    from: currentUser,
+    to: currentChatUser,
+    createdAt: serverTimestamp()
   })
 
-  /**
-   * Displays typing indicator.
-   */
-  socket.on('showTyping', (user) => {
-    const typing = document.querySelector('#typing')
-
-    if (!typing) return
-
-    typing.textContent = `${user} is typing...`
-
-    setTimeout(() => {
-      typing.textContent = ''
-    }, 1500)
-  })
-
-  /**
-   * Updates online user count.
-   */
-  socket.on('onlineUsers', (count) => {
-    const status = document.querySelector('#onlineStatus')
-
-    if (!status) return
-
-    status.textContent = `${count} users online`
-  })
+  input.value = ''
 }
 
 // ================= NAVIGATION =================
@@ -239,7 +198,7 @@ window.book = async function () {
   }
 
   try {
-    await fetch('/booking', {
+    const res = await fetch('/booking', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -253,34 +212,15 @@ window.book = async function () {
       })
     })
 
+    const data = await res.json()
+
     document.querySelector('#status').textContent =
-      'Booking sent!'
+    data.message || 'Booking sent!'
   } catch {
     document.querySelector('#status').textContent =
-      'Error sending booking'
+    'Error sending booking'
   }
 }
-
-// ================= CHAT =================
-
-/**
- * Sends real-time chat message.
- */
-window.sendMessage = function () {
-  const input = document.querySelector('#chatInput')
-
-  if (!input.value || !currentChatUser) return
-
-  console.log('Sending message...')
-
-  socket.emit('sendMessage', {
-    to: currentChatUser,
-    message: input.value
-  })
-
-  input.value = ''
-}
-
 // ================= MATCHING =================
 
 /**
@@ -380,39 +320,46 @@ window.openProfile = function (id) {
 
   currentChatUser = dev.id
 
-  const container = document.querySelector('#messages')
+  const container =
+    document.querySelector('#messages')
 
-  container.innerHTML = ''
+  const roomId = getRoomId(
+    currentUser,
+    dev.id
+  )
 
-  fetch(`/messages/${dev.id}`, {
-    headers: {
-      authorization: localStorage.getItem('chatToken')
-    }
-  })
-    .then(res => res.json())
-    .then(messages => {
-      messages.forEach(msg => {
-        const div = document.createElement('div')
+  const messagesRef = collection(
+    db,
+    'chats',
+    roomId,
+    'messages'
+  )
 
-        div.className =
-          msg.from === 'user'
-            ? 'my-message'
-            : 'their-message'
+  const q = query(
+    messagesRef,
+    orderBy('createdAt')
+  )
 
-        const time = new Date(msg.createdAt)
-          .toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit'
-          })
+  onSnapshot(q, (snapshot) => {
+    container.innerHTML = ''
 
-        div.innerHTML = `
-          <div>${msg.message}</div>
-          <small>${time}</small>
-        `
+    snapshot.forEach((doc) => {
+      const data = doc.data()
 
-        container.appendChild(div)
-      })
+      const div =
+        document.createElement('div')
+
+      div.innerHTML = `
+      <div class="bubble">
+        <div>${data.text}</div>
+      `
+
+      container.appendChild(div)
     })
+
+    container.scrollTop =
+      container.scrollHeight
+  })
 
   document.querySelector('#profileName').textContent =
     dev.name
@@ -426,9 +373,11 @@ window.openProfile = function (id) {
   profileContainer.innerHTML = ''
 
   dev.desc.split(',').forEach((skill) => {
-    const span = document.createElement('span')
+    const span =
+      document.createElement('span')
 
-    span.textContent = skill.trim()
+    span.textContent =
+      skill.trim()
 
     profileContainer.appendChild(span)
   })
@@ -438,7 +387,6 @@ window.openProfile = function (id) {
 
   window.showSection('profile')
 }
-
 // ================= ADMIN =================
 
 /**

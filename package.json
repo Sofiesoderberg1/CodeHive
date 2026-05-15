@@ -90,6 +90,7 @@
     "fastq": "^1.13.0",
     "file-entry-cache": "^6.0.1",
     "find-up": "^5.0.0",
+    "firebase": "^12.13.0",
     "flat-cache": "^3.0.4",
     "flatted": "^3.2.7",
     "for-each": "^0.3.3",
