@@ -11,14 +11,18 @@ import {
 
 console.log('Firebase connected', db)
 
-const currentUser =
-  localStorage.getItem('chatUser') ||
-  crypto.randomUUID()
+let currentUser =
+  localStorage.getItem('chatUser')
 
-localStorage.setItem(
-  'chatUser',
-  currentUser
-)
+if (!currentUser) {
+  currentUser =
+    Math.random().toString(36).slice(2)
+
+  localStorage.setItem(
+    'chatUser',
+    currentUser
+  )
+}
 
 let currentChatUser = null
 
