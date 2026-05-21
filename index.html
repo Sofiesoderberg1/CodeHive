@@ -53,7 +53,58 @@
 
     </div>
   </section>
+<section class="video-section">
 
+  <video
+    autoplay
+    muted
+    loop
+    playsinline
+    class="background-video"
+  >
+    <source
+      src="videos/programming.mp4"
+      type="video/mp4"
+    >
+  </video>
+
+  <div class="video-overlay">
+    <h2>Realtime Experiences</h2>
+
+    <p>
+      Fullstack developer creating
+      modern interactive systems.
+    </p>
+  </div>
+
+</section>
+
+<section class="gallery-section">
+
+  <div class="gallery-track">
+
+    <img src="/images/pic1.jpg" alt="">
+    <img src="/images/pic2.jpg" alt="">
+    <img src="/images/pic3.jpg" alt="">
+    <img src="/images/pic4.jpg" alt="">
+    <img src="/images/pic5.jpg" alt="">
+    <img src="/images/pic6.png" alt="">
+    <img src="/images/pic7.jpg" alt="">
+    <img src="/images/pic8.jpg" alt="">
+
+    <!-- duplicera för smooth loop -->
+    <img src="/images/pic1.jpg" alt="">
+    <img src="/images/pic2.jpg" alt="">
+    <img src="/images/pic3.jpg" alt="">
+    <img src="/images/pic4.jpg" alt="">
+    <img src="/images/pic5.jpg" alt="">
+    <img src="/images/pic6.png" alt="">
+    <img src="/images/pic7.jpg" alt="">
+    <img src="/images/pic8.jpg" alt="">
+
+  </div>
+
+</section>
   <!-- DEVELOPERS LIST -->
   <section id="developers" style="display:none">
     <button class="back" onclick="goBack()">← Back</button>
@@ -198,6 +249,19 @@
   
   <!-- CHAT -->
   <section id="chat" style="display:none">
+    <input id="loginEmail" type="email">
+<input id="loginPassword" type="password">
+
+<button onclick="register()">
+  Register
+</button>
+
+<button onclick="loginUser()">
+  Login
+</button>
+<button onclick="logoutUser()">
+  Logout
+</button>
     <button class="back" onclick="goBack()">← Back</button>
 
     <div class="container chat">

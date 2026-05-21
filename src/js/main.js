@@ -1,4 +1,10 @@
-import { db } from './firebase.js'
+import { db, auth } from './firebase.js'
+
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut
+} from 'firebase/auth'
 
 import {
   collection,
@@ -9,36 +15,124 @@ import {
   serverTimestamp
 } from 'firebase/firestore'
 
-console.log('Firebase connected', db)
+import { getRoomId }
+from './chatUtils.js'
 
-let currentUser =
-  localStorage.getItem('chatUser')
-
-if (!currentUser) {
-  currentUser =
-    Math.random().toString(36).slice(2)
-
-  localStorage.setItem(
-    'chatUser',
-    currentUser
-  )
-}
-
+let currentUser = null
 let currentChatUser = null
 
 /**
- * Creates unique room id for two users.
  *
- * @param {string} user1 - user one.
- * @param {string} user2 - user two.
- * @returns {string} - string.
  */
-function getRoomId (user1, user2) {
-  return [user1, user2]
-    .sort()
-    .join('_')
+window.register = async function () {
+  const email =
+    document.querySelector('#loginEmail').value
+
+  const password =
+    document.querySelector('#loginPassword').value
+
+  const user =
+    await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    )
+
+  currentUser = user.user.uid
+
+  console.log('Registered:', currentUser)
 }
 
+/**
+ *
+ */
+window.loginUser = async function () {
+  const email =
+    document.querySelector('#loginEmail').value
+
+  const password =
+    document.querySelector('#loginPassword').value
+
+  const user =
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    )
+
+  currentUser = user.user.uid
+
+  currentChatUser = 'emma'
+
+  console.log('Logged in:', currentUser)
+
+  loadMessages()
+}
+
+console.log('Firebase connected', db)
+
+/**
+ *
+ */
+window.logoutUser = async function () {
+  await signOut(auth)
+
+  currentUser = null
+  currentChatUser = null
+
+  document.querySelector('#messages').innerHTML = ''
+
+  window.showSection('home')
+
+  alert('Logged out')
+}
+
+/**
+ *
+ */
+function loadMessages () {
+  const roomId = getRoomId(
+    currentUser,
+    currentChatUser
+  )
+
+  const messagesRef = collection(
+    db,
+    'chats',
+    roomId,
+    'messages'
+  )
+
+  const q = query(
+    messagesRef,
+    orderBy('createdAt')
+  )
+  const container =
+    document.querySelector('#messages')
+
+  onSnapshot(q, (snapshot) => {
+    container.innerHTML = ''
+
+    snapshot.forEach((doc) => {
+      const data = doc.data()
+
+      const div =
+        document.createElement('div')
+
+      div.className =
+      data.from === currentUser
+        ? 'message'
+        : 'their-message'
+
+      div.textContent = data.text
+
+      container.appendChild(div)
+    })
+
+    container.scrollTop =
+      container.scrollHeight
+  })
+}
 // ======================
 // MENU
 // ======================
@@ -66,7 +160,13 @@ window.sendMessage = async function () {
 
   const text = input.value.trim()
 
-  if (!text || !currentChatUser) return
+  if (
+    !text ||
+    !currentUser ||
+    !currentChatUser
+  ) {
+    return
+  }
 
   const roomId = getRoomId(
     currentUser,
@@ -322,48 +422,9 @@ const developers = {
 window.openProfile = function (id) {
   const dev = developers[id]
 
-  currentChatUser = dev.id
+  currentChatUser = id
 
-  const container =
-    document.querySelector('#messages')
-
-  const roomId = getRoomId(
-    currentUser,
-    dev.id
-  )
-
-  const messagesRef = collection(
-    db,
-    'chats',
-    roomId,
-    'messages'
-  )
-
-  const q = query(
-    messagesRef,
-    orderBy('createdAt')
-  )
-
-  onSnapshot(q, (snapshot) => {
-    container.innerHTML = ''
-
-    snapshot.forEach((doc) => {
-      const data = doc.data()
-
-      const div =
-        document.createElement('div')
-
-      div.innerHTML = `
-      <div class="bubble">
-        <div>${data.text}</div>
-      `
-
-      container.appendChild(div)
-    })
-
-    container.scrollTop =
-      container.scrollHeight
-  })
+  loadMessages()
 
   document.querySelector('#profileName').textContent =
     dev.name
@@ -391,6 +452,7 @@ window.openProfile = function (id) {
 
   window.showSection('profile')
 }
+
 // ================= ADMIN =================
 
 /**
