@@ -313,7 +313,7 @@ button:hover {
 
 .gallery-track img {
   width: 500px;
-  height: 380px;
+  height: 380px; 
 
   object-fit: cover;
 
