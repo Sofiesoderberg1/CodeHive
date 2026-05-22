@@ -24,6 +24,7 @@
   "private": true,
   "devDependencies": {
     "@lnu/eslint-config": "^1.1.10",
+    "eslint": "^10.4.0",
     "vite": "^4.4.9",
     "vitest": "^4.1.6"
   },
@@ -68,7 +69,6 @@
     "es-to-primitive": "^1.2.1",
     "esbuild": "^0.18.20",
     "escape-string-regexp": "^4.0.0",
-    "eslint": "^8.48.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-import-resolver-node": "^0.3.9",
     "eslint-module-utils": "^2.8.0",

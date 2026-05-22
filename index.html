@@ -25,7 +25,7 @@
         <button class="blue-btn" onclick="showSection('portfolio')">Portfolio</button>
         <button class="blue-btn" onclick="showSection('booking')">Book</button>
         <button class="blue-btn" onclick="showSection('chat')">Chat</button>
-        <button class="blue-btn" onclick="login()">Admin</button>
+        <button class="blue-btn" onclick="adminLogin()">Admin</button>
       </div>
     </nav>
   </header>
@@ -259,6 +259,7 @@
 <button onclick="loginUser()">
   Login
 </button>
+<p id="authMessage"></p>
 <button onclick="logoutUser()">
   Logout
 </button>
@@ -273,11 +274,12 @@
     <button class="blue-btn" onclick="sendMessage()">Send</button>
     <p id="typing"></p>
     <p id="onlineStatus"></p>
+    <p id="currentUserText"></p>
     </div>
   </section>
   
     <!-- ADMIN BOOKINGS -->
-    <section id="admin" style="display:none">
+    <section id="adminLogin" style="display:none">
       <button class="back" onclick="goBack()">← Back</button>
       <div class="container admin">
       <h2>Bookings</h2>

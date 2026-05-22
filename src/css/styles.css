@@ -660,6 +660,12 @@ button:hover {
   color: #6b7280;
 }
 
+#authMessage {
+ margin-top: 10px;
+ font-size: 14px;
+ color: #ef4444;
+}
+
 /* ===== MOBILE ===== */
 
 @media (max-width: 800px) {

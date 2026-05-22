@@ -3,7 +3,8 @@ import { db, auth } from './firebase.js'
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut
+  signOut,
+  onAuthStateChanged
 } from 'firebase/auth'
 
 import {
@@ -16,10 +17,57 @@ import {
 } from 'firebase/firestore'
 
 import { getRoomId }
-from './chatUtils.js'
+  from './chatUtils.js'
 
 let currentUser = null
 let currentChatUser = null
+
+const chatSection =
+  document.querySelector('#chat')
+
+const currentUserText =
+  document.querySelector('#currentUserText')
+
+const authMessage =
+  document.querySelector('#authMessage')
+
+onAuthStateChanged(auth, (user) => {
+
+  if (user) {
+
+    currentUser = user.uid
+
+    currentUserText.textContent =
+      `Logged in as ${user.email}`
+
+    authMessage.textContent =
+      'Login successful ✅'
+
+    authMessage.style.color =
+      '#10b981'
+
+    console.log('Logged in:', user.email)
+
+  } else {
+
+    currentUser = null
+
+    currentUserText.textContent =
+      'Not logged in'
+
+    authMessage.textContent =
+      'Logged out'
+
+    authMessage.style.color =
+      '#ef4444'
+
+    document.querySelector('#messages')
+      .innerHTML = ''
+
+    console.log('Not logged in')
+  }
+})
+
 
 /**
  *
@@ -30,6 +78,18 @@ window.register = async function () {
 
   const password =
     document.querySelector('#loginPassword').value
+
+  const authMessage =
+    document.querySelector('#authMessage')
+
+  if (password.length < 6) {
+    authMessage.style.color =
+   '#ef4444'
+
+    authMessage.textContent =
+   'Password must be at least 6 characters'
+    return
+  }
 
   const user =
     await createUserWithEmailAndPassword(
@@ -53,20 +113,50 @@ window.loginUser = async function () {
   const password =
     document.querySelector('#loginPassword').value
 
-  const user =
+  const authMessage =
+    document.querySelector('#authMessage')
+
+  try {
+    const user =
     await signInWithEmailAndPassword(
       auth,
       email,
       password
     )
 
-  currentUser = user.user.uid
+    authMessage.textContent =
+      'Login successful ✅'
 
-  currentChatUser = 'emma'
+    authMessage.style.color = '#10b981'
 
-  console.log('Logged in:', currentUser)
+    currentUser = user.user.uid
 
-  loadMessages()
+    currentChatUser = 'emma'
+
+    console.log('Logged in:', currentUser)
+
+    loadMessages()
+  } catch (error) {
+    console.log(error)
+
+    if (error.code === 'auth/wrong-password') {
+      authMessage.textContent =
+        'Wrong password'
+    } else if (
+      error.code === 'auth/user-not-found'
+    ) {
+      authMessage.textContent =
+        'User not found'
+    } else if (
+        error.code === 'auth/invalid-email'
+    ) {
+      authMessage.textContent =
+        'Invalid email'
+    } else {
+      authMessage.textContent =
+        'Something went wrong'
+    }
+  }
 }
 
 console.log('Firebase connected', db)
@@ -81,6 +171,8 @@ window.logoutUser = async function () {
   currentChatUser = null
 
   document.querySelector('#messages').innerHTML = ''
+
+  document.querySelector('#authMessage').textContent = 'Logged out'
 
   window.showSection('home')
 
@@ -124,7 +216,13 @@ function loadMessages () {
         ? 'message'
         : 'their-message'
 
-      div.textContent = data.text
+      const sender =
+  data.from === currentUser
+    ? 'You'
+    : data.senderEmail
+
+div.textContent =
+  `${sender}: ${data.text}`
 
       container.appendChild(div)
     })
@@ -183,6 +281,7 @@ window.sendMessage = async function () {
   await addDoc(messagesRef, {
     text,
     from: currentUser,
+    senderEmail: auth.currentUser.email,
     to: currentChatUser,
     createdAt: serverTimestamp()
   })
@@ -498,7 +597,7 @@ window.loadBookings = async function () {
 /**
  * Admin login.
  */
-window.login = async function () {
+window.adminLogin = async function () {
   const password = prompt('Enter admin password')
 
   const res = await fetch('/login', {
@@ -514,7 +613,7 @@ window.login = async function () {
   if (data.token) {
     localStorage.setItem('token', data.token)
 
-    window.showSection('admin')
+    window.showSection('adminLogin')
 
     window.loadBookings()
   } else {

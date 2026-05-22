@@ -16,7 +16,8 @@ build-job:
 lint-test-job:
   stage: test
   script:
-    - echo "Lint/tests passed"
+    - npx eslint .
+    - npm run test
 
 deploy_production_job:
   stage: deploy
