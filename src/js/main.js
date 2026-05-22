@@ -10,6 +10,9 @@ import {
 import {
   collection,
   addDoc,
+  doc,
+  setDoc,
+  getDoc,
   query,
   orderBy,
   onSnapshot,
@@ -23,7 +26,7 @@ let currentUser = null
 let currentChatUser = null
 
 const chatSection =
-  document.querySelector('#chat')
+  document.querySelector('#chatSection')
 
 const currentUserText =
   document.querySelector('#currentUserText')
@@ -31,9 +34,11 @@ const currentUserText =
 const authMessage =
   document.querySelector('#authMessage')
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
 
   if (user) {
+
+    chatSection.style.display = 'block'
 
     currentUser = user.uid
 
@@ -46,9 +51,18 @@ onAuthStateChanged(auth, (user) => {
     authMessage.style.color =
       '#10b981'
 
+      await setDoc(
+        doc(db, 'users', user.uid),
+        {
+          online: true
+        },
+        { merge: true }
+      )
+
     console.log('Logged in:', user.email)
 
   } else {
+    chatSection.style.display = 'none'
 
     currentUser = null
 
@@ -100,6 +114,15 @@ window.register = async function () {
 
   currentUser = user.user.uid
 
+  await setDoc(
+    doc(db, 'users', user.user.uid),
+    {
+      email,
+      username: email.split('@')[0],
+      online: true
+    }
+  )
+
   console.log('Registered:', currentUser)
 }
 
@@ -131,7 +154,6 @@ window.loginUser = async function () {
 
     currentUser = user.user.uid
 
-    currentChatUser = 'emma'
 
     console.log('Logged in:', currentUser)
 
@@ -165,6 +187,14 @@ console.log('Firebase connected', db)
  *
  */
 window.logoutUser = async function () {
+  await setDoc(
+    doc(db, 'users', currentUser),
+    {
+      online: false
+    },
+    { merge: true}
+  )
+  
   await signOut(auth)
 
   currentUser = null
@@ -281,8 +311,8 @@ window.sendMessage = async function () {
   await addDoc(messagesRef, {
     text,
     from: currentUser,
-    senderEmail: auth.currentUser.email,
     to: currentChatUser,
+    senderEmail: auth.currentUser.email,
     createdAt: serverTimestamp()
   })
 
