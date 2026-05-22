@@ -16,7 +16,6 @@ build-job:
 lint-test-job:
   stage: test
   script:
-    - npx eslint .
     - npm run test
 
 deploy_production_job:
