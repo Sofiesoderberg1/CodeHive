@@ -1,15 +1,20 @@
 services:
   app:
     build:
+      context: .
       dockerfile: Dockerfile.production
+
+    ports:
+      - "3000:3000"
 
     environment:
       - NODE_ENV=production
 
   mongodb:
+    image: mongo
+
     volumes:
       - mongodb-data:/data/db
-volumes: 
+
+volumes:
   mongodb-data:
-  
-  ports: "3000:3000"
