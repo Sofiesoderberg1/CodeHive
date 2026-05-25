@@ -117,8 +117,10 @@ window.register = async function () {
   await setDoc(
     doc(db, 'users', user.user.uid),
     {
+      uid: user.user.uid,
       email,
       username: email.split('@')[0],
+      role: 'customer',
       online: true
     }
   )
@@ -212,10 +214,14 @@ window.logoutUser = async function () {
 /**
  *
  */
-function loadMessages () {
+window.loadMessages = function () {
   const roomId = getRoomId(
     currentUser,
     currentChatUser
+  )
+
+  console.log('ROOM',
+    getRoomId(currentUser, currentChatUser)
   )
 
   const messagesRef = collection(
@@ -249,7 +255,7 @@ function loadMessages () {
       const sender =
   data.from === currentUser
     ? 'You'
-    : data.senderEmail
+    : data.senderName
 
 div.textContent =
   `${sender}: ${data.text}`
@@ -283,6 +289,10 @@ window.toggleMenu = function () {
  * Sends private realtime message.
  */
 window.sendMessage = async function () {
+
+  const user = auth.currentUser
+
+
   const input =
     document.querySelector('#chatInput')
 
@@ -301,6 +311,8 @@ window.sendMessage = async function () {
     currentChatUser
   )
 
+  console.log('SENDING TO ROOM:', roomId)
+
   const messagesRef = collection(
     db,
     'chats',
@@ -309,10 +321,9 @@ window.sendMessage = async function () {
   )
 
   await addDoc(messagesRef, {
-    text,
-    from: currentUser,
-    to: currentChatUser,
-    senderEmail: auth.currentUser.email,
+    text: text,
+    senderName: user.email,
+    from: user.uid,
     createdAt: serverTimestamp()
   })
 
@@ -522,25 +533,32 @@ window.analyze = function () {
  */
 const developers = {
   sofie: {
-    id: 'sofie',
+    id: 'yA5GRPNfFxTRHHAOJYCr5lsNdas2',
     name: 'Sofie Söderberg',
     role: 'Fullstack Developer',
     desc: 'React, Node, MongoDB'
   },
 
   emma: {
-    id: 'emma',
+    id: 'Atv2bkRle2SCjzOVs4m5Ku0dkaA3',
     name: 'Emma Andersson',
     role: 'Frontend Developer',
     desc: 'I build modern websites'
   },
 
   jonas: {
-    id: 'jonas',
+    id: 'kJHdORKAjeX3pjJj5ToMdj5m2mp2',
     name: 'Jonas Eriksson',
     role: 'Backend Developer',
     desc: 'Node.js specialist'
-  }
+  },
+
+  customer: {
+  id: 'UnbHaR2pSUNf9WfsnAyQk17wRe22',
+  name: 'Customer',
+  role: 'Customer',
+  desc: 'Project client'
+}
 }
 
 /**
@@ -549,9 +567,21 @@ const developers = {
  * @param {string} id - Developer id
  */
 window.openProfile = function (id) {
+
+  console.log('PROFILE CLICKED:', id)
+
   const dev = developers[id]
 
-  currentChatUser = id
+  console.log('DEV OBJECT:', dev)
+
+  currentChatUser = dev.id
+
+  console.log('CHAT USER UID:', currentChatUser)
+
+  console.log('CURRENT USER UID:', currentUser)
+
+  console.log('ROOM:', getRoomId(currentUser, currentChatUser)
+)
 
   loadMessages()
 

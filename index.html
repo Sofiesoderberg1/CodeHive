@@ -164,7 +164,26 @@
 
         <div class="rating">⭐⭐⭐⭐☆</div>
       </div>
+<div class="dev-card" onclick="openProfile('customer')">
 
+  <div class="dev-header">
+    <img src="/images/customer.png" class="avatar">
+
+    <div class="intro">
+      <h3>Customer</h3>
+      <p class="text-muted">Project Client</p>
+    </div>
+  </div>
+
+  <div class="skills">
+    <span>Client</span>
+    <span>Project</span>
+    <span>Feedback</span>
+  </div>
+
+  <div class="rating">⭐⭐⭐⭐⭐</div>
+
+</div>
   </section>
 
   <!-- PROFILE -->
@@ -252,20 +271,20 @@
     <input id="loginEmail" type="email">
 <input id="loginPassword" type="password">
 
-<button onclick="register()">
+<button class ="register" onclick="register()">
   Register
 </button>
 
-<button onclick="loginUser()">
+<button class="loginUser" onclick="loginUser()">
   Login
 </button>
 <p id="authMessage"></p>
-<button onclick="logoutUser()">
+<button class="logout" onclick="logoutUser()">
   Logout
 </button>
     <button class="back" onclick="goBack()">← Back</button>
 
-    <div class="container chat"
+    <div class="container-chat"
     id="chatSection">
     <h2>Live Chat</h2>
     
