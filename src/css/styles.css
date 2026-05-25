@@ -226,8 +226,11 @@ button:hover {
 }
 
 .hero-right img {
-  width: 400px;
-  border-radius: 20px;
+      width: 100%;
+      max-width: 450px;
+      height: auto;
+      display: flex;
+      margin: 0 auto;
 }
 
 .hero-title {
@@ -237,8 +240,12 @@ button:hover {
 
 
 .hero-image {
-  display: flex;
-  justify-content: flex-end;
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  border-radius: 10px;
 }
 
 .cta-btn {
@@ -761,5 +768,28 @@ border: none;
 
     .portfolio {
       flex-direction: column;
+    }
+    
+    .hero {
+      flex-direction: column;
+      padding: 2rem 1rem;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .hero-left,
+    .hero-right {
+      width: 100%;
+    }
+    .hero-right img {
+      border-radius: 10px;
+      max-width: 250px;
+      margin-top: 2rem;
+    }
+
+    .hero-image {
+      border-radius: 10px;
+      max-width: 250px;
+      margin-top: 2rem;
     }
   }
