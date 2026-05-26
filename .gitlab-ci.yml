@@ -32,7 +32,7 @@ deploy_production_job:
 
   script:
     - ssh ubuntu@$PRODUCTION_HOST "
-        cd ~/CodeHive-recovery &&
+        cd ~/codehive &&
         git pull &&
         docker compose down &&
         docker compose up --build -d
