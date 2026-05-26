@@ -387,12 +387,13 @@ window.goBack = function () {
 /**
  * Toggles navigation menu.
  */
-document.querySelector('.menu-toggle')
-  .addEventListener('click', () => {
-    document
-      .getElementById('navLinks')
-      .classList.toggle('active')
-  })
+window.toggleMenu = function () {
+  const nav = document.getElementById('navLinks')
+
+  if (nav) {
+    nav.classList.toggle('active')
+  }
+}
 
 /**
  * Closes navigation menu.
