@@ -749,7 +749,7 @@ border: none;
 
   .nav-links {
     position: fixed;
-    top: 70;
+    top: 70px;
     right: 0;
 
     height: 100vh;
