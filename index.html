@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="sv">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sofie Portfolio</title>
+
+  <link rel="stylesheet" href="/src/css/styles.css">
+  <script type="module" src="/src/js/main.js"></script>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <header>
+    <h1 class="logo" onclick="showSection('home')">CodeHive</h1>
+
+    <nav>
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
+      <div class="nav-links" id="navLinks">
+        <button class="blue-btn" onclick="showSection('home')">Home</button>
+        <button class="blue-btn" onclick="showSection('developers')">Developers</button>
+        <button class="blue-btn" onclick="showSection('portfolio')">Portfolio</button>
+        <button class="blue-btn" onclick="showSection('booking')">Book</button>
+        <button class="blue-btn" onclick="showSection('chat')">Chat</button>
+        <button class="blue-btn" onclick="adminLogin()">Admin</button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- HOME -->
+  <section id="home">
+    <div class="hero">
+
+      <div class="hero-left">
+        <h2 class="hero-title">Build Modern Websites.</h2>
+
+        <p class="hero-text">
+          I create clean, user-friendly web applications.
+          Let’s build something amazing together.
+        </p>
+
+        <button class="cta-btn" onclick="showSection('booking')">
+          Book me
+        </button>
+      </div>
+
+      <div class="hero-right">
+        <img src="images/sofie3.png" class="hero-image">
+      </div>
+
+    </div>
+  </section>
+<section class="video-section">
+
+  <video
+    autoplay
+    muted
+    loop
+    playsinline
+    class="background-video"
+  >
+    <source
+      src="videos/programming.mp4"
+      type="video/mp4"
+    >
+  </video>
+
+  <div class="video-overlay">
+    <h2>Realtime Experiences</h2>
+
+    <p>
+      Fullstack developer creating
+      modern interactive systems.
+    </p>
+  </div>
+
+</section>
+
+<section class="gallery-section">
+
+  <div class="gallery-track">
+
+    <img src="/images/pic1.jpg" alt="">
+    <img src="/images/pic2.jpg" alt="">
+    <img src="/images/pic3.jpg" alt="">
+    <img src="/images/pic4.jpg" alt="">
+    <img src="/images/pic5.jpg" alt="">
+    <img src="/images/pic6.png" alt="">
+    <img src="/images/pic7.jpg" alt="">
+    <img src="/images/pic8.jpg" alt="">
+
+    <!-- duplicera för smooth loop -->
+    <img src="/images/pic1.jpg" alt="">
+    <img src="/images/pic2.jpg" alt="">
+    <img src="/images/pic3.jpg" alt="">
+    <img src="/images/pic4.jpg" alt="">
+    <img src="/images/pic5.jpg" alt="">
+    <img src="/images/pic6.png" alt="">
+    <img src="/images/pic7.jpg" alt="">
+    <img src="/images/pic8.jpg" alt="">
+
+  </div>
+
+</section>
+  <!-- DEVELOPERS LIST -->
+  <section id="developers" style="display:none">
+    <button class="back" onclick="goBack()">← Back</button>
+
+    <div class="container developers">
+      <h2>Developers</h2>
+      <div class="dev-card" onclick="openProfile('sofie')">
+        <div class="dev-header">
+          <img src="/images/sofie.png" class="avatar">
+          <div class="intro">
+            <h3>Sofie Söderberg</h3>
+            <p class="text-muted">Fullstack Developer</p>
+          </div>
+        </div>
+
+        <div class="skills">
+          <span>React</span>
+          <span>Node</span>
+          <span>MongoDB</span>
+        </div>
+
+        <div class="rating">⭐⭐⭐⭐⭐</div>
+      </div>
+
+
+      <div class="dev-card" onclick="openProfile('emma')">
+        <div class="dev-header">
+          <img src="/images/emma.png" class="avatar">
+          <div class="intro">
+            <h3>Emma Andersson</h3>
+            <p class="text-muted">Frontend Developer</p>
+          </div>
+        </div>
+
+        <div class="skills">
+          <span>React</span>
+          <span>Node</span>
+          <span>Build modern web apps</span>
+        </div>
+
+        <div class="rating">⭐⭐⭐⭐☆</div>
+      </div>
+      <div class="dev-card" onclick="openProfile('jonas')">
+        <div class="dev-header">
+          <img src="/images/jonas.png" class="avatar">
+          <div class="intro">
+            <h3>Jonas Eriksson</h3>
+            <p class="text-muted">Backend Developer</p>
+          </div>
+        </div>
+
+        <div class="skills">
+          <span>React</span>
+          <span>Node</span>
+          <span>Node.js specialist</span>
+        </div>
+
+        <div class="rating">⭐⭐⭐⭐☆</div>
+      </div>
+<div class="dev-card" onclick="openProfile('customer')">
+
+  <div class="dev-header">
+    <img src="/images/customer.png" class="avatar">
+
+    <div class="intro">
+      <h3>Customer</h3>
+      <p class="text-muted">Project Client</p>
+    </div>
+  </div>
+
+  <div class="skills">
+    <span>Client</span>
+    <span>Project</span>
+    <span>Feedback</span>
+  </div>
+
+  <div class="rating">⭐⭐⭐⭐⭐</div>
+
+</div>
+  </section>
+
+  <!-- PROFILE -->
+  <section id="profile" style="display:none">
+    <button class="back" onclick="goBack()">← Back</button>
+    
+    <div class="container profile">
+
+      <img id="profileImg">
+
+      <h2 id="profileName"></h2>
+      <p id="profileRole"></p>
+
+      <p id="profileDesc"></p>
+
+      <button class="blue-btn" onclick="showSection('booking')">Contact</button>
+      <button class="blue-btn" onclick="showSection('chat')">Chat</button>
+
+    </div>
+
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section id="portfolio" style="display:none">
+    <button class="back" onclick="goBack()">← Back</button>
+
+    <div class="container portfolio">
+
+      <div class="portfolio-left">
+        <h3>About me</h3>
+        <p>
+          My name is Sofie Söderberg and I am a Computer Science student at Linnaeus University.
+        </p>
+
+        <p>
+          I build modern web applications and enjoy clean design.
+          Feel free to explore my projects.
+        </p>
+      </div>
+
+      <div class="portfolio-right">
+        <h3>My Projects</h3>
+
+        <div class="card">Personal Web Desktop</div>
+        <div class="card">The quiz app</div>
+        <div class="card">Realtime web application</div>
+        <div class="card">Auth and resource service</div>
+        <div class="card">CRUD snippets</div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- BOOKING -->
+  <section id="booking" style="display:none">
+    <button class="back" onclick="goBack()">← Back</button>
+
+    <div class="container booking">
+    <h2>Book a meeting</h2>
+
+    <input id="name" placeholder="Your name">
+    <input id="email" placeholder="Your email">
+    <input type="datetime-local" id="date">
+    <textarea id="message" placeholder="Tell me about your project"></textarea>
+
+    <select id="developer">
+  <option value="sofie">Sofie</option>
+  <option value="emma">Emma</option>
+  <option value="jonas">Jonas</option>
+</select>
+
+    <button class="blue-btn" onclick="book()">Send booking</button>
+
+    <button class="blue-btn" onclick="analyze()">Analyze idea</button>
+    <p id="result"></p>
+
+    <p id="status"></p>
+    </div>
+  </section>
+  
+  <!-- CHAT -->
+  <section id="chat" style="display:none">
+    <input id="loginEmail" type="email">
+<input id="loginPassword" type="password">
+
+<button class ="register" onclick="register()">
+  Register
+</button>
+
+<button class="loginUser" onclick="loginUser()">
+  Login
+</button>
+<p id="authMessage"></p>
+<button class="logout" onclick="logoutUser()">
+  Logout
+</button>
+    <button class="back" onclick="goBack()">← Back</button>
+
+    <div class="container-chat"
+    id="chatSection">
+    <h2>Live Chat</h2>
+    
+    <div id="messages"></div>
+    
+    <input id="chatInput" placeholder="Write message">
+    <button class="blue-btn" onclick="sendMessage()">Send</button>
+    <p id="typing"></p>
+    <p id="onlineStatus"></p>
+    <p id="currentUserText"></p>
+    </div>
+  </section>
+  
+    <!-- ADMIN BOOKINGS -->
+    <section id="adminLogin" style="display:none">
+      <button class="back" onclick="goBack()">← Back</button>
+      <div class="container admin">
+      <h2>Bookings</h2>
+      <div id="bookingList"></div>
+      </div>
+    </section>
+
+<footer class="footer">
+  <div class="footer-top-line"></div>
+
+  <div class="footer-container">
+
+    <div class="footer-left">
+      <h2 class="logo">CodeHive</h2>
+      <p>
+        A platform where developers and clients connect, collaborate and build modern solutions together.
+      </p>
+
+      <div class="footer-socials">
+        <a href="https://github.com/Sofiesoderberg1" target="_blank">GitHub</a>
+        <span>LinkedIn</span>
+        <span>Instagram</span>
+      </div>
+    </div>
+
+    <div class="footer-links">
+
+      <div>
+        <h4>Product</h4>
+        <a href="#" onclick="showSection('chat')">Chat</a>
+
+        <a href="#" onclick="showSection('booking')">Booking</a>
+
+        <a href="#" onclick="showSection('home')">Web App</a>
+      </div>
+
+      <div>
+        <h4>Resources</h4>
+        <a href="/#">Docs</a>
+        <a href="/#">Guide</a>
+        <a href="/#">Status</a>
+      </div>
+
+      <div>
+        <h4>Company</h4>
+       <a href="#" onclick="showSection('profile')">About</a>
+       <a href="mailto:sofiemsoderberg@hotmail.com">Contact</a>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2026 CodeHive • Built by Sofie</p>
+  </div>
+</footer>
+
+</body>
+
+</html>
