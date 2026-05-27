@@ -17,6 +17,7 @@ The platform includes:
 
 Deployed version:
 
+https://codehive-1-quqk.onrender.com/
 http://cu0163.camp.lnu.se
 
 ---
