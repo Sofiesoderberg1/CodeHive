@@ -24,7 +24,7 @@
   "private": true,
   "devDependencies": {
     "@lnu/eslint-config": "^1.1.10",
-    "eslint": "^10.4.0",
+    "eslint": "^8.57.1",
     "vite": "^4.4.9",
     "vitest": "^4.1.6"
   },

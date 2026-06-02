@@ -12,7 +12,6 @@ import {
   addDoc,
   doc,
   setDoc,
-  getDoc,
   query,
   orderBy,
   onSnapshot,
@@ -35,9 +34,7 @@ const authMessage =
   document.querySelector('#authMessage')
 
 onAuthStateChanged(auth, async (user) => {
-
   if (user) {
-
     chatSection.style.display = 'block'
 
     currentUser = user.uid
@@ -51,16 +48,15 @@ onAuthStateChanged(auth, async (user) => {
     authMessage.style.color =
       '#10b981'
 
-      await setDoc(
-        doc(db, 'users', user.uid),
-        {
-          online: true
-        },
-        { merge: true }
-      )
+    await setDoc(
+      doc(db, 'users', user.uid),
+      {
+        online: true
+      },
+      { merge: true }
+    )
 
     console.log('Logged in:', user.email)
-
   } else {
     chatSection.style.display = 'none'
 
@@ -82,9 +78,8 @@ onAuthStateChanged(auth, async (user) => {
   }
 })
 
-
 /**
- *
+ * Registers a new user account.
  */
 window.register = async function () {
   const email =
@@ -129,7 +124,7 @@ window.register = async function () {
 }
 
 /**
- *
+ * Logs in user.
  */
 window.loginUser = async function () {
   const email =
@@ -156,7 +151,6 @@ window.loginUser = async function () {
 
     currentUser = user.user.uid
 
-
     console.log('Logged in:', currentUser)
 
     loadMessages()
@@ -172,7 +166,7 @@ window.loginUser = async function () {
       authMessage.textContent =
         'User not found'
     } else if (
-        error.code === 'auth/invalid-email'
+      error.code === 'auth/invalid-email'
     ) {
       authMessage.textContent =
         'Invalid email'
@@ -186,7 +180,7 @@ window.loginUser = async function () {
 console.log('Firebase connected', db)
 
 /**
- *
+ * Logs out user.
  */
 window.logoutUser = async function () {
   await setDoc(
@@ -194,9 +188,9 @@ window.logoutUser = async function () {
     {
       online: false
     },
-    { merge: true}
+    { merge: true }
   )
-  
+
   await signOut(auth)
 
   currentUser = null
@@ -212,7 +206,7 @@ window.logoutUser = async function () {
 }
 
 /**
- *
+ * Loads chat messages.
  */
 window.loadMessages = function () {
   const roomId = getRoomId(
@@ -257,7 +251,7 @@ window.loadMessages = function () {
     ? 'You'
     : data.senderName
 
-div.textContent =
+      div.textContent =
   `${sender}: ${data.text}`
 
       container.appendChild(div)
@@ -289,9 +283,7 @@ window.toggleMenu = function () {
  * Sends private realtime message.
  */
 window.sendMessage = async function () {
-
   const user = auth.currentUser
-
 
   const input =
     document.querySelector('#chatInput')
@@ -321,7 +313,7 @@ window.sendMessage = async function () {
   )
 
   await addDoc(messagesRef, {
-    text: text,
+    text,
     senderName: user.email,
     from: user.uid,
     createdAt: serverTimestamp()
@@ -555,11 +547,11 @@ const developers = {
   },
 
   customer: {
-  id: 'UnbHaR2pSUNf9WfsnAyQk17wRe22',
-  name: 'Customer',
-  role: 'Customer',
-  desc: 'Project client'
-}
+    id: 'UnbHaR2pSUNf9WfsnAyQk17wRe22',
+    name: 'Customer',
+    role: 'Customer',
+    desc: 'Project client'
+  }
 }
 
 /**
@@ -568,7 +560,6 @@ const developers = {
  * @param {string} id - Developer id
  */
 window.openProfile = function (id) {
-
   console.log('PROFILE CLICKED:', id)
 
   const dev = developers[id]
@@ -582,7 +573,7 @@ window.openProfile = function (id) {
   console.log('CURRENT USER UID:', currentUser)
 
   console.log('ROOM:', getRoomId(currentUser, currentChatUser)
-)
+  )
 
   loadMessages()
 
