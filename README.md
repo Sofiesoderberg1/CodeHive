@@ -16,7 +16,7 @@ The platform includes:
 # Live Demo
 
 Deployed version:
-
+https://getcodehive.com/
 https://codehive-1-quqk.onrender.com/
 http://cu0163.camp.lnu.se
 
