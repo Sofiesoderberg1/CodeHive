@@ -19,6 +19,12 @@ Deployed version:
 
 http://cu0163.camp.lnu.se
 
+https://getcodehive.com
+
+https://codehive-1-quqk.onrender.com/
+
+#
+
 ---
 
 # Technologies
@@ -184,6 +190,16 @@ Future Improvements:
 * Improved accessibility
 
 ⸻
+
+## Documentation
+
+Additional project documentation is available in the feature/ui-improvements branch:
+
+- REQUIREMENTS.md
+- TESTING.md
+- STATUS.md
+
+These documents contain the final requirements specification, testing report, and project status report.
 
 Authors
 
