@@ -4,5 +4,6 @@ Manual testing has been performed for:
 - Responsive design
 - Booking system
 - Live chat
-- Admin panel
 - Deployment
+
+Admin panel functionality was tested locally but is not fully available in the deployed version

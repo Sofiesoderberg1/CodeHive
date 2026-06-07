@@ -54,13 +54,27 @@ Acceptance criteria:
 
 ---
 
-### REQ-6 — Matching System
-The system shall allow users to input a project idea and receive suggestions.
+### REQ-6 — User Authentication
+The system shall allow users to register, log in and log out securely
 
 Acceptance criteria:
-- User can enter text
-- System provides suggestions
-- Suggestions are relevant
+- User can register an account
+- User can log in
+- User can log out
+- Authentication state is maintained
+
+### REQ-7 — Admin Dashboard
+
+The system shall provide an administrative interface for managing bookings and system data.
+
+Acceptance criteria:
+- Administrator can access protected admin pages
+- Administrator can view booking information
+- Administrator can perform administrative actions
+- Access is restricted to authorized users only
+
+Current status:
+Partially fulfilled. Basic implementation exists locally, but the complete functionality has not been deployed and therefore does not fully meet all acceptance criteria.
 
 ---
 
