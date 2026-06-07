@@ -186,6 +186,16 @@ Future Improvements:
 
 ⸻
 
+## Documentation
+
+Additional project documentation is available in the feature/ui-improvements branch:
+
+- REQUIREMENTS.md
+- TESTING.md
+- STATUS.md
+
+These documents contain the final requirements specification, testing report, and project status report.
+
 Authors
 
 Sofie Söderberg
